@@ -34,6 +34,7 @@
                 <Env.KEY>secret</Env.KEY>
                 <Env.FOO>bar</Env.FOO>
                 <Env.AD_MICROSERV>http://communities-i4mlab.aegean.gr/ad</Env.AD_MICROSERV>
+                <Env.mail.pass>bar</Env.mail.pass>
                 
                 
             </properties>
@@ -82,6 +83,8 @@
             <properties>
                 <test>${packageClassName}</test>
                 <Env.KEY>secret</Env.KEY>
+                <Env.mailPass>testPass</Env.mailPass>
+                
             </properties>
         </action>
         <action>

@@ -6,3 +6,4 @@
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/test/java/gr/aegean/eIdEuSmartClass/wrappers/TestUserWrappers.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/test/java/gr/aegean/eIdEuSmartClass/controllers/TestRestControllers.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/test/java/gr/aegean/eIdEuSmartClass/DbIntegrationTests.java
+/media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/test/java/gr/aegean/eIdEuSmartClass/utils/MailTester.java

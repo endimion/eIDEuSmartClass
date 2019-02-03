@@ -23,7 +23,7 @@ public class MailConfig {
     private final static String MAIL_FRIENDLY_NAME = "UAegean Online Communities";
     private final String FROM = "smartclass@aegean.gr";
 
-    @Value("${mail.pass}")
+    @Value("${mailPass}")
     private String pass;
 
     @Bean
