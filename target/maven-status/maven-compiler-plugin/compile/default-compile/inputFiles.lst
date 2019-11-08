@@ -53,7 +53,9 @@
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/dmo/User.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/utils/enums/EmailTypes.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/dao/ClassRoomStateRepository.java
+/media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/security/KeycloakTokenFilter.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/TeamsService.java
+/media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/security/ResourceAwareAuthenticationProvider.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/security/WebSecurityConfig.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/impl/TeamsServiceImpl.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/SkypeRoomService.java
@@ -63,6 +65,7 @@
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/RoleService.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/UserService.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/impl/RaspberryInterfaceImpl.java
+/media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/security/SecurityConfig.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/dmo/ActiveCodePK.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/model/service/TokenService.java
 /media/nikos/LENOVO/NetbeansProjects/eIDEuSmartClass/src/main/java/gr/aegean/eIdEuSmartClass/utils/generators/QRGenerator.java

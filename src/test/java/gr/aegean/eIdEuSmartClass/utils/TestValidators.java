@@ -5,16 +5,12 @@
  */
 package gr.aegean.eIdEuSmartClass.utils;
 
-import gr.aegean.eIdEuSmartClass.EIdEuSmartClassApplication;
 import gr.aegean.eIdEuSmartClass.model.dmo.ActiveCode;
 import gr.aegean.eIdEuSmartClass.model.dmo.ActiveCodePK;
 import gr.aegean.eIdEuSmartClass.model.dmo.Gender;
 import gr.aegean.eIdEuSmartClass.model.dmo.Role;
 import gr.aegean.eIdEuSmartClass.model.dmo.User;
 import gr.aegean.eIdEuSmartClass.model.service.ActiveCodeService;
-import gr.aegean.eIdEuSmartClass.security.TokenAuthenticationFilter;
-import gr.aegean.eIdEuSmartClass.security.WebSecurityConfig;
-import gr.aegean.eIdEuSmartClass.utils.TestValidators.mockConfig;
 import gr.aegean.eIdEuSmartClass.utils.enums.GenderEnum;
 import gr.aegean.eIdEuSmartClass.utils.enums.RolesEnum;
 import gr.aegean.eIdEuSmartClass.utils.validators.ValidateRoomCode;
@@ -29,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -46,7 +41,7 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@SpringBootTest(classes = {EIdEuSmartClassApplication.class, TokenAuthenticationFilter.class, WebSecurityConfig.class, mockConfig.class})
+//@SpringBootTest(classes = {EIdEuSmartClassApplication.class, TokenAuthenticationFilter.class, WebSecurityConfig.class, mockConfig.class})
 public class TestValidators {
 
     @Autowired
@@ -87,7 +82,7 @@ public class TestValidators {
         badCodes.add(badTestCode);
         Role badRole = new Role(RolesEnum.VISITOR.role());
         Gender badGender = new Gender(GenderEnum.UNSPECIFIED.gender());
-        User badUser = new User(badRole, "e", "n", "s", "e", "m", "a", "c", badGender, LocalDate.now(), null,"engName","engSurname");
+        User badUser = new User(badRole, "e", "n", "s", "e", "m", "a", "c", badGender, LocalDate.now(), null, "engName", "engSurname");
         ActiveCodePK badKey = new ActiveCodePK(badUser, null);
         badTestCode.setId(badKey);
 
@@ -99,7 +94,7 @@ public class TestValidators {
         adminCodes.add(adminCode);
         Role adminRole = new Role(RolesEnum.ADMIN.role());
         Gender gender = new Gender(GenderEnum.UNSPECIFIED.gender());
-        User user = new User(adminRole, "e", "n", "s", "e", "m", "a", "c", gender, LocalDate.now(), null,"engName","engSurname");
+        User user = new User(adminRole, "e", "n", "s", "e", "m", "a", "c", gender, LocalDate.now(), null, "engName", "engSurname");
         ActiveCodePK key = new ActiveCodePK(user, null);
         adminCode.setId(key);
 
@@ -109,7 +104,7 @@ public class TestValidators {
         superAdminCode.setGrantedAt(todayAt458);
         superAdminCodes.add(superAdminCode);
         Role supeAadminRole = new Role(RolesEnum.SUPERADMIN.role());
-        User suser = new User(supeAadminRole, "e", "n", "s", "e", "m", "a", "c", gender, LocalDate.now(), null,"engName","engSurname");
+        User suser = new User(supeAadminRole, "e", "n", "s", "e", "m", "a", "c", gender, LocalDate.now(), null, "engName", "engSurname");
         ActiveCodePK skey = new ActiveCodePK(suser, null);
         superAdminCode.setId(skey);
 

@@ -19,9 +19,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 public class MailConfig {
 
-    private final static String MAIL_HOST = "smtp.aegean.gr";
-    private final static String MAIL_FRIENDLY_NAME = "UAegean Online Communities";
-    private final String FROM = "smartclass@aegean.gr";
+//    private final static String MAIL_HOST = "smtp.aegean.gr";
+    private final static String MAIL_HOST = "smtp.office365.com";
 
     @Value("${mailPass}")
     private String pass;
@@ -32,7 +31,7 @@ public class MailConfig {
 
         javaMailSender.setHost(MAIL_HOST);
         javaMailSender.setPort(587);
-        javaMailSender.setUsername("onlinecommunities@aegean.gr");
+        javaMailSender.setUsername("smartclass@i4mlabUAegean.onmicrosoft.com");
         javaMailSender.setPassword(pass);
         javaMailSender.setJavaMailProperties(getMailProperties());
         return javaMailSender;

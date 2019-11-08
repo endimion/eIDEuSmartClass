@@ -81,7 +81,6 @@
                                 <div class="feature-box fbox-center fbox-effect nobottomborder">
                                     <div style="
                                          padding-bottom: 8.5rem;
-                                         margin-bottom:;
                                          ">
 
                                         <div class="fbox-icon"><a href="/selectTeam"><i class="icon-group i-alt blue"></i></a></div>
@@ -95,7 +94,6 @@
                                 <div class="feature-box fbox-center fbox-effect nobottomborder">
                                     <div style="
                                          padding-bottom: 8.5rem;
-                                         margin-bottom:;
                                          ">
                                         <div class="fbox-icon"><a href="/selectConf"><i class="icon-video i-alt blue"></i></a></div>
                                         <h4>Join instantly a <span>Video-Conference Session</span></h4>
@@ -196,7 +194,7 @@
                                             let authCookie = getCookie("access_token");
                                             if (typeCookie == "" || authCookie == "") {
                                                 //
-                                                window.location.replace(/*[[${loginPath}]]*/'https://eideusmartclass.aegean.gr/eidasLogin/login');
+                                               window.location.replace(/*[[${loginPath}]]*/);
                                             } else {
                                                 window.location.href = "/eIDASSuccess";
                                             }

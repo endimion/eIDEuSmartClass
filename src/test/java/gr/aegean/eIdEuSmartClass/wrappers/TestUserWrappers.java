@@ -32,12 +32,21 @@ public class TestUserWrappers {
         assertEquals(user.getEngName(), null);
         assertEquals(user.getCurrentGivenName(), "ΑΝΔΡΕΑΣ");
     }
-    
+
     @Test
     public void testUserWrapperONLYEnglishUser() throws IOException {
         String jwt = "{\"firstName\":\"ANDREAS\",\"eid\":\"GR/GR/ERMIS-11076669\",\"familyName\":\"PETROU\",\"personIdentifier\":\"GR/GR/ERMIS-11076669\",\"dateOfBirth\":\"1980-01-01\"}";
         FormUser user = UserWrappers.wrapDecodedJwtEidasUser(jwt);
         assertEquals(user.getEngName(), "ANDREAS");
+    }
+
+    @Test
+    public void testReplaceKeycloakRealm() {
+
+        String toClean = "eidas.gr/gr/ermis-11076669";
+        String res = toClean.substring(toClean.indexOf("/") + 1);
+        assertEquals(res, "gr/ermis-11076669");
+
     }
 
 }

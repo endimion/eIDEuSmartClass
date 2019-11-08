@@ -28,13 +28,15 @@ public class ADHelpers {
 
         String mailName = StringUtils.isEmpty(user.get().getEngName()) ? user.get().getCurrentGivenName() : user.get().getEngName();
         String mailSurname = StringUtils.isEmpty(user.get().getEngSurname()) ? user.get().getCurrentFamilyName() : user.get().getEngSurname();
-        if (StringUtils.isEmpty(user.get().getPrincipal())) {
+
+        if (StringUtils.isEmpty(user.get().getPrincipal()) && !emailType.equals(EmailTypes.AccountCreation)) {
             String creationResponse = adServ.createADCredentialsUpdateUserGetPass(user, userServ);
             if (creationResponse.equals("EXISTS")) {
                 sendMailUsingType(emailType, mailServ,
                         user.get().getEmail(), mailName + " " + mailSurname, serviceName, serviceUrl, user.get().getPrincipal(), null, true);
             } else {
                 if (!creationResponse.equals("NOK")) {
+                    log.info("CREATED USER " + user.get().getEngName() + " with AD password " + creationResponse);
                     sendMailUsingType(emailType, mailServ,
                             user.get().getEmail(), mailName + " " + mailSurname, serviceName, serviceUrl, user.get().getPrincipal(), creationResponse, false);
                 } else {

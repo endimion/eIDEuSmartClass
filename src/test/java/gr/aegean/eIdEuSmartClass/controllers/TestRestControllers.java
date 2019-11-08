@@ -5,8 +5,6 @@
  */
 package gr.aegean.eIdEuSmartClass.controllers;
 
-import gr.aegean.eIdEuSmartClass.EIdEuSmartClassApplication;
-import gr.aegean.eIdEuSmartClass.controllers.TestRestControllers.mockConfig;
 import gr.aegean.eIdEuSmartClass.model.dmo.ClassRoomState;
 import gr.aegean.eIdEuSmartClass.model.dmo.Gender;
 import gr.aegean.eIdEuSmartClass.model.dmo.Role;
@@ -16,8 +14,6 @@ import gr.aegean.eIdEuSmartClass.model.service.ClassRoomService;
 import gr.aegean.eIdEuSmartClass.model.service.RoleService;
 import gr.aegean.eIdEuSmartClass.model.service.TokenService;
 import gr.aegean.eIdEuSmartClass.model.service.UserService;
-import gr.aegean.eIdEuSmartClass.security.TokenAuthenticationFilter;
-import gr.aegean.eIdEuSmartClass.security.WebSecurityConfig;
 import gr.aegean.eIdEuSmartClass.utils.enums.RolesEnum;
 import gr.aegean.eIdEuSmartClass.utils.enums.RoomStatesEnum;
 import gr.aegean.eIdEuSmartClass.utils.wrappers.DateWrappers;
@@ -29,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -48,7 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@SpringBootTest(classes = {EIdEuSmartClassApplication.class, TokenAuthenticationFilter.class, WebSecurityConfig.class, mockConfig.class})
+//@SpringBootTest(classes = {EIdEuSmartClassApplication.class, TokenAuthenticationFilter.class, WebSecurityConfig.class, mockConfig.class})
 public class TestRestControllers {
 
     @Autowired
@@ -94,14 +89,12 @@ public class TestRestControllers {
         public ActiveCodeService activeServ() {
             return Mockito.mock(ActiveCodeService.class);
         }
-        
+
 //        @Bean
 //        @Primary
 //        public TokenService tokenServ(){
 //            return Mockito.mock(TokenService.class);
 //        }
-        
-
     }
 
     @Autowired
@@ -112,7 +105,7 @@ public class TestRestControllers {
 
     @Autowired
     private ClassRoomService classServ;
-    
+
     @Autowired
     private TokenService tokenServ;
 
@@ -124,11 +117,11 @@ public class TestRestControllers {
         Gender testGen = new Gender("MALE");
         User adminUser = new User(adminRole, "adminId", "adminName",
                 "adminSurname", "adminEmail", "adminMobile", "adminAffiliation", "admionCountry",
-                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(),"engName","engSurname");
+                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(), "engName", "engSurname");
 
         User guestUser = new User(new Role(RolesEnum.UNIDENTIFIED.role()), "guestId", "adminName",
                 "adminSurname", "adminEmail", "adminMobile", "adminAffiliation", "admionCountry",
-                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(),"engName","engSurname");
+                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(), "engName", "engSurname");
 
 //        Mockito.when(roleServ.getRoleByName(any(String.class))).thenReturn(adminRole);
         Mockito.when(userServ.findByEid("GR/GR/ERMIS-11076669")).thenReturn(Optional.of(adminUser));
@@ -137,7 +130,7 @@ public class TestRestControllers {
         ClassRoomState activeState = new ClassRoomState();
         activeState.setName(RoomStatesEnum.ACTIVE.state());
         Mockito.when(classServ.getRoomStatus("activeRoom")).thenReturn(Optional.of(activeState));
-       
+
     }
 
     @Test

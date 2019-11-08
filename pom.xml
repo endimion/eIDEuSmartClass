@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.2.RELEASE</version>
+        <version>2.1.7.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -22,6 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+         <jwks-rsa.version>0.3.0</jwks-rsa.version>
     </properties>
 
     <dependencies>
@@ -64,7 +65,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>5.0.4.BUILD-SNAPSHOT</version>
+            <!--<version>5.0.4.BUILD-SNAPSHOT</version>-->
             <type>jar</type>
         </dependency>
         <dependency>
@@ -76,7 +77,7 @@
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
-            <version>1.5.6</version>
+            <!--<version>1.5.6</version>-->
             <type>jar</type>
         </dependency>
         <dependency>
@@ -93,13 +94,46 @@
             <artifactId>javase</artifactId>
             <version>2.0</version>
         </dependency>
+        
+        
+         
+         
+         <!-- keycloak stuff -->
+<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-2-starter -->
+<dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-spring-boot-2-starter</artifactId>
+    <version>4.0.0.Final</version>
+</dependency>
+<!-- end of keycloak stuff -->
+       
+       
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>5.1.4.RELEASE</version>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-security-adapter</artifactId>
+            <version>7.0.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>
+    
+    
+<!--   <dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.keycloak.bom</groupId>
+      <artifactId>keycloak-adapter-bom</artifactId>
+      <version>7.0.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>-->
 
     <build>
         <plugins>

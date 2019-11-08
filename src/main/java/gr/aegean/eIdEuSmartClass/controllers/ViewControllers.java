@@ -35,7 +35,6 @@ import gr.aegean.eIdEuSmartClass.utils.pojo.BaseResponse;
 import gr.aegean.eIdEuSmartClass.utils.pojo.FormUser;
 import gr.aegean.eIdEuSmartClass.utils.wrappers.UserWrappers;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,6 +42,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
+import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +50,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -124,20 +125,26 @@ public class ViewControllers {
      * @return
      */
     @RequestMapping(value = {"landing", "/", ""})
-    public String landing(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
+    public String landing(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal) {
         model.addAttribute("classRooms", classServ.findAll());
         model.addAttribute("skypeRooms", skypeRoomServ.getAllRooms());
         model.addAttribute("teams", teamServ.findAll());
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
         model.addAttribute("loginPath", propServ.getPropByName("LOGIN_URL"));
         return "landingView";
     }
 
     @RequestMapping(value = {"smart-class"})
-    public String smartClass(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+    public String smartClass(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal) {
+        model.addAttribute("loggedIn", principal != null);
         model.addAttribute("loginPath", propServ.getPropByName("LOGIN_URL"));
         return "smartclassView";
+    }
+
+    @GetMapping(value = {"test1"})
+    public @ResponseBody
+    String test1(Principal principal) {
+        return "YEA";
     }
 
     /**
@@ -158,17 +165,21 @@ public class ViewControllers {
      * @param redirectAttrs
      * @return
      */
-    @RequestMapping(value = {"eIDASSuccess"})
+    @RequestMapping(value = {"eIDASSuccess", "login"})
     public String login(@CookieValue(value = TOKEN_NAME, required = false) String jwtCookie,
             @CookieValue(value = "type", required = false) String typeCookie,
             HttpServletRequest req, Principal principal, Model model, RedirectAttributes redirectAttrs) {
-
+//        getKeycloakSecurityContext().getIdToken();
         if (principal != null) {
-            Optional<User> user = userServ.findByEid(principal.getName());
-            if (!user.isPresent()) {
-                try {
-                    String decodedToken = tokenServ.decode(jwtCookie);
-                    FormUser fuser = UserWrappers.wrapDecodedJwtEidasUser(decodedToken);
+            try {
+                String eid = principal.getName();
+                FormUser fuser = UserWrappers.wrapIDTokenToEidasUser(((KeycloakSecurityContext) req.getAttribute(KeycloakSecurityContext.class.getName())).getIdToken(),
+                        eid);
+                Optional<User> user = userServ.findByEid(fuser.getEid());
+                if (!user.isPresent()) {
+//                    ((KeycloakSecurityContext) req.getAttribute(KeycloakSecurityContext.class.getName())).getIdToken().getOtherClaims();
+                    //date of birth
+                    //
                     user = Optional.of(UserWrappers.wrapFormUserToDBUser(fuser, roleServ, genServ));
                     if (user.isPresent()) {
                         user.get().setEmail("n/a");
@@ -190,62 +201,68 @@ public class ViewControllers {
 
                     mailServ.sendMailToAdmin(user.get().getCurrentGivenName() + user.get().getCurrentFamilyName());
                     return "redirect:/register";
-                } catch (UnsupportedEncodingException ex) {
-                    log.info("ERROR ", ex);
-                } catch (IOException ex) {
-                    log.info("ERROR ", ex);
                 }
-            }
-            if (user.isPresent() && user.get().getRole().getName().equals(RolesEnum.UNIDENTIFIED.role())) {
-                redirectAttrs.addFlashAttribute("user", user.get());
-                return "redirect:/pending";
-            }
+                if (user.isPresent() && user.get().getRole().getName().equals(RolesEnum.UNIDENTIFIED.role())) {
+                    redirectAttrs.addFlashAttribute("user", user.get());
+                    return "redirect:/pending";
+                }
 
-            if (typeCookie.contains("team")) {
-                return "redirect:/team";
-            }
+                if (typeCookie.contains("team")) {
+                    return "redirect:/team";
+                }
 
-            if (typeCookie.contains("skypeJoin")) {
-                return "redirect:/selectConf";
-            }
+                if (typeCookie.contains("skypeJoin")) {
+                    return "redirect:/selectConf";
+                }
 
-            if (typeCookie.contains("skype")) {
-                return "redirect:/skype";
-            }
+                if (typeCookie.contains("skype")) {
+                    return "redirect:/skype";
+                }
 
-            if (typeCookie.contains("physical")) {
-                return "redirect:/roomaccess";
-            }
+                if (typeCookie.contains("physical")) {
+                    return "redirect:/roomaccess";
+                }
 
-            if (typeCookie.contains("admin")) {
-                return "redirect:/admin";
-            }
+                if (typeCookie.contains("admin")) {
+                    return "redirect:/admin";
+                }
 
-            if (typeCookie.contains("register")) {
-                return "redirect:/";
-            }
+                if (typeCookie.contains("register")) {
+                    return "redirect:/";
+                }
 
+            } catch (IOException e) {
+                log.error(e.getMessage());
+
+            }
         }
         return "redirect:/error";
     }
 
     @RequestMapping(value = {"pending"})
-    public String pending(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+    public String pending(Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal
+    ) {
+        model.addAttribute("loggedIn", principal != null);
 
         return "pendingView";
     }
 
     @RequestMapping(value = {"register"})
-    public String register(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+    public String register(Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal
+    ) {
+        model.addAttribute("loggedIn", principal != null);
         return "registerView";
     }
 
     @RequestMapping(value = {"profile", "edit"})
-    public String editProfile(Principal principal, Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
+    public String editProfile(Principal principal, Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie
+    ) {
+
         Optional<User> user = userServ.findByEid(principal.getName());
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
 
         if (user.isPresent()) {
             try {
@@ -260,19 +277,23 @@ public class ViewControllers {
     }
 
     @RequestMapping(value = {"selectTeam"})
-    public String teamSelect(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
+    public String teamSelect(Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal
+    ) {
         List<Teams> teams = teamServ.findAll();
         model.addAttribute("teams", teams);
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
         model.addAttribute("loginPath", propServ.getPropByName("LOGIN_URL"));
         return "selectTeam";
     }
 
     @RequestMapping(value = {"selectConf"})
-    public String skypeSelect(Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
+    public String skypeSelect(Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal
+    ) {
         List<SkypeRoom> rooms = skypeRoomServ.getAllRooms();
         model.addAttribute("rooms", rooms);
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
         model.addAttribute("loginPath", propServ.getPropByName("LOGIN_URL"));
         return "selectConf";
     }
@@ -284,7 +305,7 @@ public class ViewControllers {
             @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie
     ) {
         Optional<User> user = userServ.findByEid(principal.getName());
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
         // insert user to Group “SkypeForBusiness” of the Azure AD
         if (user.isPresent()) {
             String roomId = typeCookie.split("-")[1];
@@ -326,13 +347,17 @@ public class ViewControllers {
     }
 
     @RequestMapping(value = {"team"})
-    public String team(Principal principal, @CookieValue(value = "type", required = true) String typeCookie, Model model, @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
+    public String team(Principal principal,
+            @CookieValue(value = "type", required = true) String typeCookie, Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie
+    ) {
+
         Optional<User> user = userServ.findByEid(principal.getName());
         //insert User into the Group “Teams” of the Azure AD  add2Grpup user ID is the new AD-USER-ID field in the db
         String teamId = typeCookie.split("-")[1];
         Optional<Teams> team = teamServ.findById(Long.parseLong(teamId));
         List<Teams> teams = teamServ.findAll();
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
 
         String mailName = StringUtils.isEmpty(user.get().getEngName()) ? user.get().getCurrentGivenName() : user.get().getEngName();
         String mailSurname = StringUtils.isEmpty(user.get().getEngSurname()) ? user.get().getCurrentFamilyName() : user.get().getEngSurname();
@@ -376,13 +401,15 @@ public class ViewControllers {
         return "error";
     }
 
-    // //User Is inserted into the Group “UAegean-HPClass” of the Azure AD 
+    // //User Is inserted into the Group “UAegean-HPClass” of the Azure AD
     @RequestMapping(value = {"roomaccess"})
     public String physical(Model model,
             Principal principal,
             @CookieValue(value = "type", required = true) String typeCookie,
-            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie
+    ) {
+        model.addAttribute("loggedIn", principal != null);
+
         Optional<User> user = userServ.findByEid(principal.getName());
         String roomId = typeCookie.split("-")[1];
         Optional<ClassRoom> room = classServ.getRoomById(roomId);
@@ -429,9 +456,12 @@ public class ViewControllers {
      * in the API call***
      */
     @RequestMapping(value = "createUser", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public String createUser(@ModelAttribute("user") @Valid FormUser user, BindingResult bindingResult, Model model,
-            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie) {
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+    public String createUser(@ModelAttribute("user")
+            @Valid FormUser user, BindingResult bindingResult,
+            Model model,
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Principal principal
+    ) {
+        model.addAttribute("loggedIn", principal != null);
 
         if (bindingResult.hasErrors()) {
 //            log.info("errors in form submition");
@@ -446,7 +476,7 @@ public class ViewControllers {
                     GenderEnum.UNSPECIFIED.gender(), user.getDateOfBirth(), user.getEmail(),
                     user.getMobile(), user.getAffiliation(), user.getCountry(), null, null, user.getEngName(), user.getEngSurname());
             if (resp.getStatus().equals("OK")) {
-//                mailServ.prepareAndSendAccountCreated(user.getEmail(), "Smart Class Account Details", userName);
+//               mailServ.prepareAndSendAccountCreated(user.getEmail(), userName);
                 Optional<User> theUser = Optional.of(UserWrappers.wrapFormUserToDBUser(user, roleServ, genServ));
                 String creationResult = ADHelpers.createUserAndSendEmail(theUser, mailServ, userServ, adServ, null, null, EmailTypes.AccountCreation);
                 if (!creationResult.equals("error")) {
@@ -467,9 +497,12 @@ public class ViewControllers {
      * call to add the user to the active directory
      */
     @RequestMapping(value = "updateUser", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public String updateUser(@ModelAttribute("user") @Valid FormUser user,
+    public String updateUser(@ModelAttribute("user")
+            @Valid FormUser user,
             BindingResult bindingResult,
-            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Model model) {
+            @CookieValue(value = TOKEN_NAME, required = false) String jwtCookie, Model model,
+            Principal principal
+    ) {
         Optional<User> oldUser = userServ.findByEid(user.getEid());
         String gender = GenderEnum.UNSPECIFIED.gender();
 
@@ -478,7 +511,7 @@ public class ViewControllers {
             return "profile";
         }
 
-        model.addAttribute("loggedIn", !StringUtils.isEmpty(jwtCookie));
+        model.addAttribute("loggedIn", principal != null);
         if (oldUser.isPresent()) {
             gender = oldUser.get().getGender().getName();
             BaseResponse resp = userServ.saveOrUpdateUser(user.getEid(), user.getCurrentGivenName(), user.getCurrentFamilyName(),
@@ -499,7 +532,8 @@ public class ViewControllers {
      * @return
      */
     @RequestMapping(value = "admin", method = {RequestMethod.GET})
-    public String admin(Model model) {
+    public String admin(Model model
+    ) {
         List<SkypeRoom> skRooms = skypeRoomServ.getAllRooms();
         List<User> unIdentified = userServ.findAllUIdentified();
         List<ClassRoom> rooms = classServ.findAll();
@@ -513,12 +547,15 @@ public class ViewControllers {
     }
 
     @RequestMapping(value = "adminLogin", method = {RequestMethod.GET})
-    public String adminLoginView(Model model) {
+    public String adminLoginView(Model model
+    ) {
         return "adminLoginView";
     }
 
     @RequestMapping(value = "admin/edit/{urId}", method = {RequestMethod.GET})
-    public String adminEditUserView(Model model, @PathVariable("urId") String id) {
+    public String adminEditUserView(Model model,
+            @PathVariable("urId") String id
+    ) {
         Optional<User> user = userServ.findById(Long.parseLong(id));
         List<Role> roles = roleServ.findAllRoles();
         if (user.isPresent()) {
@@ -534,7 +571,8 @@ public class ViewControllers {
     }
 
     @RequestMapping(value = "admin/addSkypeRoom", method = {RequestMethod.GET})
-    public String adminAddSkypeRoom(Model model) {
+    public String adminAddSkypeRoom(Model model
+    ) {
 
         return "addSkypeRoomView";
 

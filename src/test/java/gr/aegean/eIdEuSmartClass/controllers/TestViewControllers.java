@@ -5,14 +5,10 @@
  */
 package gr.aegean.eIdEuSmartClass.controllers;
 
-import gr.aegean.eIdEuSmartClass.EIdEuSmartClassApplication;
-import gr.aegean.eIdEuSmartClass.controllers.TestViewControllers.configView;
 import gr.aegean.eIdEuSmartClass.model.dmo.Gender;
 import gr.aegean.eIdEuSmartClass.model.dmo.Role;
 import gr.aegean.eIdEuSmartClass.model.dmo.User;
 import gr.aegean.eIdEuSmartClass.model.service.UserService;
-import gr.aegean.eIdEuSmartClass.security.TokenAuthenticationFilter;
-import gr.aegean.eIdEuSmartClass.security.WebSecurityConfig;
 import gr.aegean.eIdEuSmartClass.utils.enums.RolesEnum;
 import gr.aegean.eIdEuSmartClass.utils.wrappers.DateWrappers;
 import java.util.Optional;
@@ -22,21 +18,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpStatus;
-
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.security.web.FilterChainProxy;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  *
@@ -44,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@SpringBootTest(classes = {EIdEuSmartClassApplication.class, TokenAuthenticationFilter.class,
-    WebSecurityConfig.class, configView.class})
+//@SpringBootTest(classes = {EIdEuSmartClassApplication.class, TokenAuthenticationFilter.class,
+//    WebSecurityConfig.class, configView.class})
 public class TestViewControllers {
 
     @Autowired
@@ -83,11 +76,11 @@ public class TestViewControllers {
         Gender testGen = new Gender("MALE");
         User adminUser = new User(adminRole, "adminId", "adminName",
                 "adminSurname", "adminEmail", "adminMobile", "adminAffiliation", "admionCountry",
-                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(),"engName","engSurname");
+                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(), "engName", "engSurname");
 
         User guestUser = new User(new Role(RolesEnum.UNIDENTIFIED.role()), "guestId", "adminName",
                 "adminSurname", "adminEmail", "adminMobile", "adminAffiliation", "admionCountry",
-                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(),"engName","engSurname");
+                testGen, DateWrappers.parseEidasDate("1983-10-05"), DateWrappers.getNowTimeStamp(), "engName", "engSurname");
 
         Mockito.when(userServ.findByEid("GR/GR/ERMIS-11076669")).thenReturn(Optional.of(adminUser));
         //GR/GR/ERMIS-58333947

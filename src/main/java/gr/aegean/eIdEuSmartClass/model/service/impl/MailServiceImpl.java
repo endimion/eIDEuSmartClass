@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class MailServiceImpl implements MailService {
 
     private final static String MAIL_FRIENDLY_NAME = "UAegean Smart Class";
-    private final String FROM = "smartclass@aegean.gr";
+    private final String FROM = "smartclass@i4mlabUAegean.onmicrosoft.com";
     private static Logger log = LoggerFactory.getLogger(MailService.class);
 
     @Autowired
@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendAccountCreated(String recipient, String userName) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -56,7 +56,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendTeamMessage(String recipient, String name, String teamName, String principalName, String password) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -78,7 +78,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendSkypeLink(String recipient, String name, String confRoom, String url, String principalName, String password) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -100,7 +100,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendAccountActivated(String recipient, String name) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -119,7 +119,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendTeamMessageExisting(String recipient, String name, String teamName, String principal) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -138,7 +138,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendSkypeLinkExisting(String recipient, String name, String confRoom, String url, String principal) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -159,7 +159,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public String sendMailToAdmin(String name) {
         log.info("Sending email to admin");
-        String[] admins = {"triantafyllou.ni@gmail.com","pkavassalis@atlantis-group.gr","adanar@atlantis-group.gr","msofianop@gmail.com"};
+        String[] admins = {"triantafyllou.ni@gmail.com", "pkavassalis@atlantis-group.gr", "msofianop@gmail.com"};
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -178,7 +178,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepareAndSendAccountRejected(String recipient, String name) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -197,7 +197,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepeareAndSendPhysicalMail(String recipient, String name, String principalName, String password) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -216,7 +216,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public String prepeareAndSendPhysicalMailExisting(String recipient, String name, String principalName) {
-        log.info("Sending email to " +recipient);
+        log.info("Sending email to " + recipient);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");

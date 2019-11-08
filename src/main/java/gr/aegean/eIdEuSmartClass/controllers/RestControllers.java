@@ -10,36 +10,37 @@ import gr.aegean.eIdEuSmartClass.model.dmo.Role;
 import gr.aegean.eIdEuSmartClass.model.dmo.SkypeRoom;
 import gr.aegean.eIdEuSmartClass.model.dmo.User;
 import gr.aegean.eIdEuSmartClass.model.service.ActiveCodeService;
+import gr.aegean.eIdEuSmartClass.model.service.ActiveDirectoryService;
 import gr.aegean.eIdEuSmartClass.model.service.ClassRoomService;
 import gr.aegean.eIdEuSmartClass.model.service.MailService;
-import gr.aegean.eIdEuSmartClass.model.service.UserService;
-import gr.aegean.eIdEuSmartClass.utils.pojo.BaseResponse;
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import gr.aegean.eIdEuSmartClass.model.service.RaspberryInterface;
 import gr.aegean.eIdEuSmartClass.model.service.RoleService;
 import gr.aegean.eIdEuSmartClass.model.service.SkypeRoomService;
+import gr.aegean.eIdEuSmartClass.model.service.UserService;
 import gr.aegean.eIdEuSmartClass.utils.enums.RolesEnum;
 import gr.aegean.eIdEuSmartClass.utils.enums.RoomStatesEnum;
+import gr.aegean.eIdEuSmartClass.utils.pojo.BaseResponse;
 import gr.aegean.eIdEuSmartClass.utils.validators.ValidateRoomCode;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -73,6 +74,9 @@ public class RestControllers {
 
     @Autowired
     private SkypeRoomService skypeServ;
+
+    @Autowired
+    private ActiveDirectoryService adServ;
 
     public RestControllers() {
         SUPER_USERS = new HashSet<String>();
@@ -120,7 +124,7 @@ public class RestControllers {
      * @param principal
      * @return
      */
-    @RequestMapping(value = "updateclass", method = {RequestMethod.POST} )
+    @RequestMapping(value = "updateclass", method = {RequestMethod.POST})
     public @ResponseBody
     BaseResponse updateClassRoom(@RequestParam(value = "roomName", required = true) String roomName,
             @RequestParam(value = "roomStatus", required = true) String status,
@@ -164,17 +168,16 @@ public class RestControllers {
         }
         return new BaseResponse(BaseResponse.FAILED);
     }
-    
-    
+
     @RequestMapping(value = "checkclassRasp", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public @ResponseBody BaseResponse checkclassRasp(@RequestParam(value="roomName") String roomName){
+    public @ResponseBody
+    BaseResponse checkclassRasp(@RequestParam(value = "roomName") String roomName) {
         Optional<ClassRoomState> room = classroomServ.getRoomStatus(roomName);
-        if(room.isPresent()){
+        if (room.isPresent()) {
             return new BaseResponse(room.get().getName());
         }
         return new BaseResponse("N/A");
     }
-    
 
     @RequestMapping(value = "getUsersByRole", method = {RequestMethod.GET})
     public @ResponseBody
@@ -199,7 +202,10 @@ public class RestControllers {
             if (user.isPresent() && activatedRoles.contains(newRoleName)) {
                 String mailName = StringUtils.isEmpty(user.get().getEngName()) ? user.get().getCurrentGivenName() : user.get().getEngName();
                 String mailSurname = StringUtils.isEmpty(user.get().getEngSurname()) ? user.get().getCurrentFamilyName() : user.get().getEngSurname();
-                mailServ.prepareAndSendAccountActivated(user.get().getEmail(), mailName +" "+mailSurname);
+
+//                log.info("WILL create user " + user.get().getCurrentFamilyName() + "to AD");
+//                ADHelpers.createUserAndSendEmail(user, mailServ, userServ, adServ, newRoleName, userEid, EmailTypes.AccountActivation);
+                mailServ.prepareAndSendAccountActivated(user.get().getEmail(), mailName + " " + mailSurname);
             }
             return new BaseResponse(BaseResponse.SUCCESS);
         }
@@ -210,13 +216,13 @@ public class RestControllers {
     @RequestMapping(value = "addSkypeRoom", method = {RequestMethod.POST}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public @ResponseBody
     BaseResponse addSkypeRoom(@RequestParam(value = "roomName", required = true) String roomName,
-            @RequestParam(value = "roomUrl", required = true) String roomUrl, @RequestParam(value="start") String start, 
-            @RequestParam(value= "end") String end){
+            @RequestParam(value = "roomUrl", required = true) String roomUrl, @RequestParam(value = "start") String start,
+            @RequestParam(value = "end") String end) {
         try {
             SkypeRoom room = new SkypeRoom();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDate startDate = LocalDate.parse(start,formatter);
-            LocalDate endDate = LocalDate.parse(end,formatter);
+            LocalDate startDate = LocalDate.parse(start, formatter);
+            LocalDate endDate = LocalDate.parse(end, formatter);
             room.setName(roomName);
             room.setUrl(roomUrl);
             skypeServ.save(room);

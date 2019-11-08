@@ -34,7 +34,9 @@
                 <Env.KEY>secret</Env.KEY>
                 <Env.FOO>bar</Env.FOO>
                 <Env.AD_MICROSERV>http://communities-i4mlab.aegean.gr/ad</Env.AD_MICROSERV>
-                <Env.mail.pass>bar</Env.mail.pass>
+                <Env.mailPass>bar</Env.mailPass>
+                <Env.LOGIN_URL>http://localhost:9090/login</Env.LOGIN_URL>
+                
                 
                 
             </properties>
